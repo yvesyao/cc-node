@@ -55,10 +55,15 @@ function query(sql, parameters, callback) {
     parameters = parameters || [];
     if(typeof parameters === 'function') {
         callback = parameters;
-        parameters = [];
+        parameters = {};
     }
-    for(var i = 0; i < parameters.length; ++i) {
-        _params.push(connection.escape(parameters[i]))
+
+    for(var key in parameters) {
+        if(parameters.hasOwnProperty(key)) {
+            // TODO: fix error
+            // _params[key] = (pool.escape(parameters[key]));
+            _params[key] = parameters[key];
+        }
     }
 
     pool.acquire(function(err, client) {
@@ -67,7 +72,8 @@ function query(sql, parameters, callback) {
             // factory.create function
         }
         else {
-            client.query(sql, _params, (err, res) => {
+            console.log('params', typeof(_params), _params)
+            client.query(sql, parameters, (err, res) => {
                 var result = null;
                 if(err) {
                     console.error("Query error");

@@ -9,10 +9,14 @@ router.get('/', function(req, res, next) {
 });
 
 router.get('/login', function(req, res) {
-console.log(req);
-    db.query('select username from userdata where username=:username and password=:password', req.params, (data) => {
-        res.send(data !== null);
-    });
+	const _query = req.query;
+		db.query('select username from userdata where username = ? and password = ?', [_query.username, _query.password], (data) => {
+			console.log("data");
+			res.setHeader("Access-Control-Allow-Origin", "*");
+			res.json({
+				result: data !== null
+				});
+		});
 });
 
 module.exports = router;

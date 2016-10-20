@@ -14,7 +14,7 @@ rl.prompt();
 
 rl.on('line', (input) => {
     console.info(`Processing: ${input}`);
-    db.query(input, result => {
+    db.query(input, ['admin', 'admin'], result => {
         console.log(result);
         rl.prompt();
     });
