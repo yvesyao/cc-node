@@ -13,6 +13,7 @@
     "formidable": "^1.0.17",
     "generic-pool": "^2.4.3",
     "jade": "~1.11.0",
+    "lodash": "^4.16.4",
     "log-color-date": "^1.1.0",
     "mongoose": "^4.4.6",
     "morgan": "~1.7.0",

@@ -3,20 +3,9 @@
  */
 var express = require('express');
 const db = require('../public/javascripts/db');
+var routeUtil = require('./utils');
+var getChartData = require('../public/javascripts/getChartData');
 var router = express.Router();
-
-function getComputer() {
-    var resultJson = {};
-    db.query('select * from computer limit 0,5', req.params, (data) => {
-        res.send(data !== null);
-    });
-    return resultJson;
-}
-
-function getUser() {
-    var resultJson = {};
-    return resultJson;
-}
 
 function getGroup() {
     var resultJson = {};
@@ -29,7 +18,25 @@ router.get('/', function(req, res, next) {
 });
 
 router.get('/computer', function(req, res) {
+    db.query('select * from computer limit 0,1000', (result) => {
+        var _resultJson = routeUtil.generateResult(result);
+        res.setHeader("Access-Control-Allow-Origin", "*");
+        if(result.success) {
+            _resultJson.data = getChartData.getComputer(result.data);
+        }
+        res.json(_resultJson);
+    });
+});
 
+router.get('/user', function(req, res) {
+    db.query('select * from user limit 0,1000', (result) => {
+        var _resultJson = routeUtil.generateResult(result);
+        res.setHeader("Access-Control-Allow-Origin", "*");
+        if(result.success) {
+            _resultJson.data = getChartData.getUser(result.data);
+        }
+        res.json(_resultJson);
+    });
 });
 
 module.exports = router;

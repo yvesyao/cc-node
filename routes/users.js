@@ -1,4 +1,6 @@
 var express = require('express');
+var object = require('lodash/fp/object');
+var routeUtil = require('./utils');
 const db = require('../public/javascripts/db');
 var router = express.Router();
 
@@ -9,9 +11,16 @@ router.get('/', function(req, res, next) {
 });
 
 router.get('/login', function(req, res) {
-    db.query('select username from userdata where username=:username and password=:password', req.params, (data) => {
-        res.send(data !== null);
-    });
+	const _query = req.query;
+		db.query('select username from userdata where username = ? and password = ?', [_query.username, _query.password], (result) => {
+			var _resultJson = routeUtil.generateResult(result);
+            if(result.success) {
+                _resultJson.result = result.data !== null;
+                delete _resultJson.data;
+            }
+            res.setHeader("Access-Control-Allow-Origin", "*");
+			res.json(object.assign(_resultJson));
+		});
 });
 
 module.exports = router;
