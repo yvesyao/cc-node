@@ -82,7 +82,7 @@ function getJson(name, dbData) {
 
         if(!resultJson) { // 获取 root 节点
             resultJson = {
-                [ROOT = _generatePath(positionString, 'DC').join('.')]: {}
+                [ROOT = _generatePath(positionString, 'DC').reverse().join('.')]: {}
             }
         }
         var nodePos = resultJson[ROOT]; // 用于定位到当前 node 对应的位置
@@ -99,6 +99,36 @@ function getJson(name, dbData) {
     return _formatJson('', resultJson).children[0];
 }
 
+function __generateGroupPath(memberOf) {
+
+}
+
+function getGroup(dbData) {
+    var ROOT = '', // 根节点名称
+        resultJson = void 0;
+    dbData.forEach(data => {
+        const positionString = data['DN'],
+            nodePath = _generateGroupPath(data['memberOf']);
+
+        if(!resultJson) { // 获取 root 节点
+            resultJson = {
+                [ROOT = _generatePath(positionString, 'DC').reverse().join('.')]: {}
+            }
+        }
+        var nodePos = resultJson[ROOT]; // 用于定位到当前 node 对应的位置
+
+        nodePath.forEach(parentNodeName => {
+            if(!nodePos[parentNodeName]) { // 新建路径
+                nodePos[parentNodeName] = {};
+            }
+            nodePos = nodePos[parentNodeName]; // 向下寻找目标节点位置
+        });
+        nodePath.unshift(ROOT);
+        nodePos = _filterData(name, nodePath, data);
+    });
+    return _formatJson('', resultJson).children[0];
+}
+
 function getComputer(dbData) {
     return getJson('computer', dbData);
 }
@@ -109,5 +139,6 @@ function getUser(dbData) {
 
 module.exports = {
     getComputer: getComputer,
+    getGroup: getGroup,
     getUser: getUser
 };
