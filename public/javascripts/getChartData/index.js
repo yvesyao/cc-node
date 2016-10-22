@@ -38,10 +38,11 @@ function _generatePath(str, key) {
  * @param dbData
  * @private
  */
-function _filterData(name, dbData) {
+function _filterData(name, nodePath, dbData) {
     var serviceList = [];
     var _result = {
-        __isLeaf: true
+        __isLeaf: true,
+        path: nodePath.join('/')
     };
     __keys[name].forEach(key => {
         var _value = dbData[key];
@@ -91,7 +92,7 @@ function getJson(name, dbData) {
             }
             nodePos = nodePos[parentNodeName]; // 向下寻找目标节点位置
         });
-        nodePos[nodeName] = _filterData(name, data);
+        nodePos[nodeName] = _filterData(name, nodePath.unshift(ROOT), data);
     });
     return _formatJson('', resultJson).children[0];
 }

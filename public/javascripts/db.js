@@ -9,6 +9,7 @@ require('log-color-date');
 var pool = new Pool({
     name     : 'mysql',
     create   : function(callback) {
+
         var connection = mysql.createConnection(dbConf);
 
         // parameter order: err, resource
