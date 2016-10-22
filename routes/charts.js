@@ -39,4 +39,15 @@ router.get('/user', function(req, res) {
     });
 });
 
+router.get('/groupData', function(req, res) {
+    db.query('select * from groupData limit 0,1000', (result) => {
+        var _resultJson = routeUtil.generateResult(result);
+        res.setHeader("Access-Control-Allow-Origin", "*");
+        if(result.success) {
+            _resultJson.data = getChartData.getComputer(result.data);
+        }
+        res.json(_resultJson);
+    });
+});
+
 module.exports = router;

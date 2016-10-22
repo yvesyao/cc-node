@@ -10,8 +10,14 @@ var getChartData = require('../public/javascripts/getChartData');
 //    }
 //});
 
-db.query('select * from user limit 0,50', (result) => {
+//db.query('select * from user limit 0,50', (result) => {
+//    if(result.success) {
+//        console.log(JSON.stringify(getChartData.getUser(result.data)));
+//    }
+//});
+
+db.query('select * from groupData limit 0,1000', (result) => {
     if(result.success) {
-        console.log(JSON.stringify(getChartData.getUser(result.data)));
+        console.log(JSON.stringify(getChartData.getGroup(result.data)));
     }
 });

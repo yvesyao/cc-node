@@ -4,11 +4,12 @@
  */
 var object = require('lodash/fp/object');
 var __keys = {
-    computer: ['description', 'whenCreated', 'servicePrincipalName', 'whenChanged', 'uSNCreated', 'name', 'userAccountControl', 'badPwdCount', 'badPasswordTime', 'lastLogon', 'pwdLastSet', 'accountExpires', 'logonCount', 'operatingSystem', 'operatingSystemVersion', 'operatingSystemServicePack', 'lastLogonTimestamp', 'memberOf'],
-    user: ['description', 'whenCreated', 'whenChanged', 'uSNCreated', 'userAccountControl', 'name', 'badPwdCount', 'badPasswordTime', 'lastLogon', 'pwdLastSet', 'accountExpires', 'logonCountlastLogonTimestamp', 'managedBy', 'memberOf', 'homeDirectory', 'lockoutTime', 'sn', 'givenName', 'department', 'company', 'telephoneNumber', 'streetAddress', 'mail', 'l', 'postalCode', 'manager', 'mobile', 'uNCName', 'url', 'userWorkstations', 'proxyAddresses']
+    computer: ['description', 'whenCreated', 'servicePrincipalName', 'whenChanged', 'uSNCreated', 'userAccountControl', 'badPwdCount', 'badPasswordTime', 'lastLogon', 'pwdLastSet', 'accountExpires', 'logonCount', 'operatingSystem', 'operatingSystemVersion', 'operatingSystemServicePack', 'lastLogonTimestamp', 'memberOf'],
+    user: ['description', 'whenCreated', 'whenChanged', 'uSNCreated', 'userAccountControl', 'badPwdCount', 'badPasswordTime', 'lastLogon', 'pwdLastSet', 'accountExpires', 'logonCountlastLogonTimestamp', 'managedBy', 'memberOf', 'homeDirectory', 'lockoutTime', 'sn', 'givenName', 'department', 'company', 'telephoneNumber', 'streetAddress', 'mail', 'l', 'postalCode', 'manager', 'mobile', 'uNCName', 'url', 'userWorkstations', 'proxyAddresses']
 };
 function _formatJson(name, srcJson) {
     if(srcJson.__isLeaf) {
+        srcJson.name = name;
         return object.omit('__isLeaf', srcJson);
     }
     return {
@@ -99,8 +100,18 @@ function getJson(name, dbData) {
     return _formatJson('', resultJson).children[0];
 }
 
-function __generateGroupPath(memberOf) {
+function _generateGroupPath(memberOf) {
+    return memberOf.split('\\\\\n').reverse();
+}
 
+function _filterGroupData(result, member) {
+    (member.match(/CN=([^\\]*)/g) || []).forEach(matched => {
+        result[matched.substr(3)] = {
+            size: 1,
+            __isLeaf: true
+        }
+    });
+    return result;
 }
 
 function getGroup(dbData) {
@@ -116,15 +127,13 @@ function getGroup(dbData) {
             }
         }
         var nodePos = resultJson[ROOT]; // 用于定位到当前 node 对应的位置
-
-        nodePath.forEach(parentNodeName => {
+        nodePath.slice(1).forEach(parentNodeName => {
             if(!nodePos[parentNodeName]) { // 新建路径
                 nodePos[parentNodeName] = {};
             }
             nodePos = nodePos[parentNodeName]; // 向下寻找目标节点位置
         });
-        nodePath.unshift(ROOT);
-        nodePos = _filterData(name, nodePath, data);
+        _filterGroupData(nodePos, data['member']);
     });
     return _formatJson('', resultJson).children[0];
 }
