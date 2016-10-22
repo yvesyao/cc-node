@@ -9,7 +9,6 @@ router.get('/', function(req, res, next) {
 });
 
 router.get('/login', function(req, res) {
-console.log(req);
     db.query('select username from userdata where username=:username and password=:password', req.params, (data) => {
         res.send(data !== null);
     });
