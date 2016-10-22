@@ -1,5 +1,6 @@
 /**
  * @author 奕夫 <yitao.yyt@alibaba-inc.com>
+ *     获取 computer 和 user 的数据
  */
 var object = require('lodash/fp/object');
 var __keys = {
@@ -92,7 +93,8 @@ function getJson(name, dbData) {
             }
             nodePos = nodePos[parentNodeName]; // 向下寻找目标节点位置
         });
-        nodePos[nodeName] = _filterData(name, nodePath.unshift(ROOT), data);
+        nodePath.unshift(ROOT);
+        nodePos[nodeName] = _filterData(name, nodePath, data);
     });
     return _formatJson('', resultJson).children[0];
 }
