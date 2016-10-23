@@ -151,7 +151,7 @@ function getGroup(dbData) {
             }
             nodePos = nodePos[parentNodeName]; // 向下寻找目标节点位置
         });
-        nodePos[data['name']] = {};
+        nodePos[data['name']] = { size: 1, __isLeaf: true};
         //_filterGroupData(nodePos, data['member']);
     });
     return _formatJson('', resultJson).children[0];
