@@ -44,7 +44,8 @@ router.get('/user', function(req, res) {
 });
 
 router.get('/groupData', function(req, res) {
-    db.query('select * from groupData limit 0,1000', (result) => {
+    const nameList = (req.query.groupList || []).map(db.escape);
+    db.query('select * from groupData where name in (' + nameList.join(',') + ')', (result) => {
         var _resultJson = routeUtil.generateResult(result);
         res.setHeader("Access-Control-Allow-Origin", "*");
         if(result.success) {

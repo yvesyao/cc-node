@@ -113,6 +113,7 @@ function disConnect() {
 
 module.exports = {
     //connect,
+    escape: mysql.escape,
     query,
     disConnect
 };
