@@ -22,7 +22,9 @@ router.get('/computer', function(req, res) {
         var _resultJson = routeUtil.generateResult(result);
         res.setHeader("Access-Control-Allow-Origin", "*");
         if(result.success) {
-            _resultJson.data = getChartData.getComputer(result.data);
+            const tree = getChartData.getComputer(result.data);
+            _resultJson.data = tree.treeData;
+            _resultJson.info = tree.treeInfo;
         }
         res.json(_resultJson);
     });
@@ -33,7 +35,9 @@ router.get('/user', function(req, res) {
         var _resultJson = routeUtil.generateResult(result);
         res.setHeader("Access-Control-Allow-Origin", "*");
         if(result.success) {
-            _resultJson.data = getChartData.getUser(result.data);
+            const tree = getChartData.getUser(result.data);
+            _resultJson.data = tree.treeData;
+            _resultJson.info = tree.treeInfo;
         }
         res.json(_resultJson);
     });

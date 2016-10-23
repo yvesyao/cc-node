@@ -3,6 +3,7 @@
  *     获取 computer 和 user 的数据
  */
 var object = require('lodash/fp/object');
+var array = require('lodash/fp/array');
 var __keys = {
     computer: ['description', 'whenCreated', 'servicePrincipalName', 'whenChanged', 'uSNCreated', 'userAccountControl', 'badPwdCount', 'badPasswordTime', 'lastLogon', 'pwdLastSet', 'accountExpires', 'logonCount', 'operatingSystem', 'operatingSystemVersion', 'operatingSystemServicePack', 'lastLogonTimestamp', 'memberOf'],
     user: ['description', 'whenCreated', 'whenChanged', 'uSNCreated', 'userAccountControl', 'badPwdCount', 'badPasswordTime', 'lastLogon', 'pwdLastSet', 'accountExpires', 'logonCountlastLogonTimestamp', 'managedBy', 'memberOf', 'homeDirectory', 'lockoutTime', 'sn', 'givenName', 'department', 'company', 'telephoneNumber', 'streetAddress', 'mail', 'l', 'postalCode', 'manager', 'mobile', 'uNCName', 'url', 'userWorkstations', 'proxyAddresses']
@@ -75,7 +76,11 @@ function _filterData(name, nodePath, dbData) {
  */
 function getJson(name, dbData) {
     var ROOT = '', // 根节点名称
-        resultJson = void 0;
+        resultJson = void 0,
+        maxDepth = 0,
+        leafCount = 0,
+        groupCount = [],
+        fileName = 'sample.csv';// TODO: fileName 作为参数和查询条件
     dbData.forEach(data => {
         const positionString = data['DN'],
             nodeName = data['name'],
@@ -95,9 +100,22 @@ function getJson(name, dbData) {
             nodePos = nodePos[parentNodeName]; // 向下寻找目标节点位置
         });
         nodePath.unshift(ROOT);
+        if(nodePath.length > maxDepth) {
+            maxDepth = nodePath.length;
+        }
+        ++leafCount;
         nodePos[nodeName] = _filterData(name, nodePath, data);
+        groupCount.push(nodePos[nodeName].memberOf);
     });
-    return _formatJson('', resultJson).children[0];
+    return {
+        treeData: _formatJson('', resultJson).children[0],
+        treeInfo: {
+            fileName: fileName,
+            maxDepth: maxDepth,
+            leafCount: leafCount,
+            groupCount: array.uniq(groupCount).length
+        }
+    };
 }
 
 function _generateGroupPath(memberOf) {
@@ -127,7 +145,7 @@ function getGroup(dbData) {
             }
         }
         var nodePos = resultJson[ROOT]; // 用于定位到当前 node 对应的位置
-        nodePath.slice(1).forEach(parentNodeName => {
+        nodePath.splice(1).forEach(parentNodeName => {
             if(!nodePos[parentNodeName]) { // 新建路径
                 nodePos[parentNodeName] = {};
             }
