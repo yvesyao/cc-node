@@ -15,11 +15,14 @@ router.get('/login', function(req, res) {
 		db.query('select username from userdata where username = ? and password = ?', [_query.username, _query.password], (result) => {
 			var _resultJson = routeUtil.generateResult(result);
             if(result.success) {
-                _resultJson.result = result.data !== null;
+                var userName = result.data;
+                _resultJson.result = userName !== null;
                 delete _resultJson.data;
+                if(userName) {
+                    req.session.user = userName;
+                }
             }
-            res.setHeader("Access-Control-Allow-Origin", "*");
-			res.json(object.assign(_resultJson));
+			res.json(_resultJson);
 		});
 });
 

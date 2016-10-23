@@ -79,7 +79,7 @@ function getJson(name, dbData) {
         resultJson = void 0,
         maxDepth = 0,
         leafCount = 0,
-        groupCount = [],
+        group = [],
         fileName = 'sample.csv';// TODO: fileName 作为参数和查询条件
     dbData.forEach(data => {
         const positionString = data['DN'],
@@ -105,7 +105,7 @@ function getJson(name, dbData) {
         }
         ++leafCount;
         nodePos[nodeName] = _filterData(name, nodePath, data);
-        groupCount.push(nodePos[nodeName].memberOf);
+        group.push(nodePos[nodeName].memberOf);
     });
     return {
         treeData: _formatJson('', resultJson).children[0],
@@ -113,7 +113,7 @@ function getJson(name, dbData) {
             fileName: fileName,
             maxDepth: maxDepth,
             leafCount: leafCount,
-            groupCount: array.uniq(groupCount).length
+            group: array.uniq(group)
         }
     };
 }

@@ -56,6 +56,15 @@ if (app.get('env') === 'development') {
   });
 }
 
+//登录拦截器
+//app.use(function (req, res, next) {
+//    var url = req.originalUrl;
+//    if (url != "/user/login" && !req.session.user) {
+//        return res.redirect("/user/login");
+//    }
+//    next();
+//});
+
 // production error handler
 // no stacktraces leaked to user
 app.use(function(err, req, res, next) {
