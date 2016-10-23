@@ -48,7 +48,7 @@ router.get('/groupData', function(req, res) {
         var _resultJson = routeUtil.generateResult(result);
         res.setHeader("Access-Control-Allow-Origin", "*");
         if(result.success) {
-            _resultJson.data = getChartData.getComputer(result.data);
+            _resultJson.data = getChartData.getGroup(result.data);
         }
         res.json(_resultJson);
     });
