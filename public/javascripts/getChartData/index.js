@@ -138,6 +138,9 @@ function getGroup(dbData) {
         const positionString = data['DN'],
             nodePath = _generateGroupPath(data['memberOf']);
 
+        if(nodePath.length <= 1) {
+            return;
+        }
         if(!resultJson) { // 获取 root 节点
             resultJson = {
                 [ROOT = _generatePath(positionString, 'DC').reverse().join('.')]: {}
