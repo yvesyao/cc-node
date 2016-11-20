@@ -1,6 +1,4 @@
-/**
- * @author 奕夫 <yitao.yyt@alibaba-inc.com>
- */
+
 var express = require('express');
 const db = require('../public/javascripts/db');
 var routeUtil = require('./utils');

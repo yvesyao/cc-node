@@ -1,5 +1,4 @@
 /**
- * @author 奕夫 <yitao.yyt@alibaba-inc.com>
  *     获取 computer 和 user 的数据
  */
 var object = require('lodash/fp/object');
@@ -41,7 +40,7 @@ function _generatePath(str, key) {
  * @param dbData
  * @private
  */
-function _filterData(name, nodePath, dbData) {
+function _filterData(name, nodePath, dbData, ROOT) {
     var serviceList = [];
     var _result = {
         __isLeaf: true,
@@ -61,7 +60,7 @@ function _filterData(name, nodePath, dbData) {
                 });
                 _result.service = serviceList;
                 return;
-            case 'memberOf': _value = _value.split('\\\\\n')[0]
+            case 'memberOf': _value = _value.split('\\\\\n')[0] || ROOT
         }
         _result[key] = _value;
     });
@@ -104,7 +103,7 @@ function getJson(name, dbData) {
             maxDepth = nodePath.length;
         }
         ++leafCount;
-        nodePos[nodeName] = _filterData(name, nodePath, data);
+        nodePos[nodeName] = _filterData(name, nodePath, data, ROOT);
         group.push(nodePos[nodeName].memberOf);
     });
     return {

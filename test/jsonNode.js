@@ -1,6 +1,4 @@
-/**
- * @author 奕夫 <yitao.yyt@alibaba-inc.com>
- */
+
 const db = require('../public/javascripts/db');
 var getChartData = require('../public/javascripts/getChartData');
 
